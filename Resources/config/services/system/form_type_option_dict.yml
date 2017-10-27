@@ -1,0 +1,156 @@
+parameters:    
+    tm_solution.dynamic_form_bundle.system_form_type_option_dict.config: 
+        base:   
+            services:
+                 get:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.model'
+                        method: findOneById            
+        actions:        
+            new:
+                allowed: true
+                templates:
+                    widget: 'System\FormTypeOptionDict\new.html.twig'
+                services:
+                    create:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.model'
+                        method: save
+                form: 
+                   action: new 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\InsertFormType'
+                
+                template_var: 'formTypeOptionDict' 
+                adapter: 'app_bundle.data_adapter'
+                redirection:
+                    route_name: index   
+            edit:
+                allowed: true
+                templates:
+                    widget: 'System\FormTypeOptionDict\edit.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\EditFormType' 
+                   action: edit
+                services:
+                    update:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.model'
+                        method: update
+                template_var: 'formTypeOptionDict'
+                adapter: 'app_bundle.data_adapter'            
+            delete:
+                allowed: true
+                form: 
+                   action: delete
+                services:
+                    delete:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.model'
+                        method: delete
+                redirection:
+                    route_name: index        
+                templates:
+                    widget: 'System\FormTypeOptionDict\delete.html.twig'
+                adapter: 'app_bundle.data_adapter'            
+            index:
+                allowed: true
+                templates:
+                    widget: 'System\FormTypeOptionDict\index.html.twig'
+                adapter: 'app_bundle.data_adapter'      
+            list:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormTypeOptionDict\list.html.twig' 
+                services:
+                    list:                        
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.paginator_model'                        
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\FilterFormType'
+                   action: list
+                   method: GET
+                template_var: 'formTypeOptionDicts'                
+                adapter: 'app_bundle.paginator_data_adapter'    
+            typeahead:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'blank.html.twig' 
+                services:
+                    list:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_type_option_dict.typeahead'
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\FilterFormType'
+                   action: list
+                   method: GET
+                adapter: 'flexix_model.typeahead_adapter'   
+            filter:
+                allowed:
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormTypeOptionDict\filter.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\FilterFormType'
+                   method: GET
+                   action: index
+                adapter: 'app_bundle.data_adapter'            
+            get:
+                allowed: true
+                templates:
+                    widget: 'System\FormTypeOptionDict\get.html.twig'
+                template_var: 'formTypeOptionDict'
+                adapter: 'app_bundle.data_adapter'            
+            tabs:
+                allowed: true
+                templates:
+                    widget: 'System\FormTypeOptionDict\tabs.html.twig'
+                template_var: 'formTypeOptionDict'
+                adapter: 'app_bundle.data_adapter'     
+            
+services:
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict:
+            class: Flexix\ConfigurationBundle\Util\Configuration
+            arguments: ['%tm_solution.dynamic_form_bundle.system_form_type_option_dict.config%']
+            tags:
+                - { name: flexix_prototype_controller.controller_configuration, module: 'system', alias: 'form-type-option-dict' } 
+
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.form.type.edit:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\EditFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }
+        
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.form.type.insert:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\InsertFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }        
+        
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.form.type.filter:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormTypeOptionDict\FilterFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }            
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.model:
+            class: TMSolution\DynamicFormBundle\Model\System\FormTypeOptionDict\Model
+            arguments: ['@doctrine.orm.entity_manager',tm_solution.dynamic_form_bundle.system_form_type_option_dict.repository ]
+      
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.paginator_model:    
+            class: TMSolution\DynamicFormBundle\Model\System\FormTypeOptionDict\PaginatorModel
+            arguments: ['@flexix_model.model','@flexix_model.filter','@flexix_model.paginator',null,'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_type_option_dict.repository','%locale%']   
+                
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.repository:    
+            class: TMSolution\DynamicFormBundle\Repository\System\FormTypeOptionDict\Repository
+            arguments: ['@doctrine.orm.entity_manager','@tm_solution.dynamic_form_bundle.system_form_type_option_dict.metadata','%locale%']   
+            
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.metadata:    
+            class: Doctrine\ORM\Mapping\ClassMetaData
+            arguments: [TMSolution\DynamicFormBundle\Entity\FormTypeOptionDict]            
+        tm_solution.dynamic_form_bundle.system_form_type_option_dict.typeahead:
+            class: TMSolution\DynamicFormBundle\Model\System\FormTypeOptionDict\Typeahead
+            arguments: ['@tm_solution.dynamic_form_bundle.system_form_type_option_dict.model','@flexix_model.filter','@flexix_model.paginator', {'sort': 'entity.id', 'sortDirection':'asc'},'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_type_option_dict.repository','%locale%','query',[ 'entity.name']]    
+    
+            
+            
+           

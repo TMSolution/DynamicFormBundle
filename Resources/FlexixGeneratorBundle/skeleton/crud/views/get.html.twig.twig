@@ -1,0 +1,69 @@
+{% block extends %}
+    {{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+
+{% block body %}
+    {{ "{% block container %}" }}
+    {{ "{% import 'macros.html.twig' as macros %}" }}
+    <div class="card get-view" data-parameters-{{module|snake}}-{{alias|snake}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }} >
+        {{ include('crud/views/others/header.html.twig.twig') -}}
+        <div class="card-body card-padding">
+        <div class="circle circle-big mobile-button bgm-blue">
+              <a class="link-edit" data-bind="parameters-{{module|snake}}-{{alias|snake}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }}"  data-module="{{'{{driver.module}}'}}" data-alias="{{'{{driver.alias}}'}}" href="{{ "{{ path('edit',{'module': driver.module, 'alias': driver.alias, 'context': context,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~"}) }}" }}">
+                <i class="zmdi zmdi-edit"></i>
+                </a>
+         </div>
+        <div class="entity-parameters" >
+                <div class='hidden' data-holder-entity-name data-bind='entity-name' >{{ "{{"~entity_singularized~"}}" }} </div>
+                {%- for fieldname, field in entity_analyzer.getFields %}
+
+                    {% if  field.relation_type is not defined or field.relation_type not in ['manyToMany','oneToMany'] %}
+                    
+                        <h4 class="parameter-name">{{ "{{ '"~translation_prefix~"."~fieldname|snake|lower~"'|trans }}" }}</h4>
+                    
+                    {%- endif %}
+
+                    {%- if field.type in ['datetime'] %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ '|date(\'Y-m-d H:i\') }}{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+
+                    {%- elseif field.type in ['date'] %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ '|date(\'Y-m-d\') }}{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+
+                    {%- elseif field.type in ['time'] %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ '|date(\'H:i\') }}{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+
+                    {%- elseif field.type in ['array','simple_array','json','json_array'] %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{ macros.printTree(' ~ entity_singularized ~ '.' ~ fieldname~ ')}}{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+
+                    {%- elseif field.type in ['boolean'] %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{\'system.yes\'|trans}}{% else %}{{\'system.no\'|trans}}{% endif %}' }}</div>
+
+                    {%- elseif field.type =='entity' %}
+
+                    {% if field.relation_type in ["oneToOne","manyToOne"]  %}
+                        <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}<span class="property-value badge badge-entity badge-entity-a" >{{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' }}</span>{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+                    {% endif %}
+                    {%- else %}
+
+                    <div class="parameter-value">{{ '{% if ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ ' }}{% else %}<span class="badge bgm-gray">{{"system._no_value"|trans}}</span> {% endif %}' }}</div>
+
+                    {%- endif %}
+
+
+
+                    {%- endfor %}
+
+                </div>
+            </div>
+            <div class=" card-footer card-padding">
+
+            </div>    
+        </div>
+
+        {{ "{% endblock %}" }}
+        {% endblock body %}

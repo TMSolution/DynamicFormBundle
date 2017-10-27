@@ -1,0 +1,156 @@
+parameters:    
+    tm_solution.dynamic_form_bundle.system_form_page.config: 
+        base:   
+            services:
+                 get:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.model'
+                        method: findOneById            
+        actions:        
+            new:
+                allowed: true
+                templates:
+                    widget: 'System\FormPage\new.html.twig'
+                services:
+                    create:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.model'
+                        method: save
+                form: 
+                   action: new 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormPage\InsertFormType'
+                
+                template_var: 'formPage' 
+                adapter: 'app_bundle.data_adapter'
+                redirection:
+                    route_name: index   
+            edit:
+                allowed: true
+                templates:
+                    widget: 'System\FormPage\edit.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormPage\EditFormType' 
+                   action: edit
+                services:
+                    update:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.model'
+                        method: update
+                template_var: 'formPage'
+                adapter: 'app_bundle.data_adapter'            
+            delete:
+                allowed: true
+                form: 
+                   action: delete
+                services:
+                    delete:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.model'
+                        method: delete
+                redirection:
+                    route_name: index        
+                templates:
+                    widget: 'System\FormPage\delete.html.twig'
+                adapter: 'app_bundle.data_adapter'            
+            index:
+                allowed: true
+                templates:
+                    widget: 'System\FormPage\index.html.twig'
+                adapter: 'app_bundle.data_adapter'      
+            list:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormPage\list.html.twig' 
+                services:
+                    list:                        
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.paginator_model'                        
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormPage\FilterFormType'
+                   action: list
+                   method: GET
+                template_var: 'formPages'                
+                adapter: 'app_bundle.paginator_data_adapter'    
+            typeahead:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'blank.html.twig' 
+                services:
+                    list:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_page.typeahead'
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormPage\FilterFormType'
+                   action: list
+                   method: GET
+                adapter: 'flexix_model.typeahead_adapter'   
+            filter:
+                allowed:
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormPage\filter.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormPage\FilterFormType'
+                   method: GET
+                   action: index
+                adapter: 'app_bundle.data_adapter'            
+            get:
+                allowed: true
+                templates:
+                    widget: 'System\FormPage\get.html.twig'
+                template_var: 'formPage'
+                adapter: 'app_bundle.data_adapter'            
+            tabs:
+                allowed: true
+                templates:
+                    widget: 'System\FormPage\tabs.html.twig'
+                template_var: 'formPage'
+                adapter: 'app_bundle.data_adapter'     
+            
+services:
+        tm_solution.dynamic_form_bundle.system_form_page:
+            class: Flexix\ConfigurationBundle\Util\Configuration
+            arguments: ['%tm_solution.dynamic_form_bundle.system_form_page.config%']
+            tags:
+                - { name: flexix_prototype_controller.controller_configuration, module: 'system', alias: 'form-page' } 
+
+        tm_solution.dynamic_form_bundle.system_form_page.form.type.edit:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormPage\EditFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }
+        
+        tm_solution.dynamic_form_bundle.system_form_page.form.type.insert:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormPage\InsertFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }        
+        
+        tm_solution.dynamic_form_bundle.system_form_page.form.type.filter:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormPage\FilterFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }            
+        tm_solution.dynamic_form_bundle.system_form_page.model:
+            class: TMSolution\DynamicFormBundle\Model\System\FormPage\Model
+            arguments: ['@doctrine.orm.entity_manager',tm_solution.dynamic_form_bundle.system_form_page.repository ]
+      
+        tm_solution.dynamic_form_bundle.system_form_page.paginator_model:    
+            class: TMSolution\DynamicFormBundle\Model\System\FormPage\PaginatorModel
+            arguments: ['@flexix_model.model','@flexix_model.filter','@flexix_model.paginator',null,'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_page.repository','%locale%']   
+                
+        tm_solution.dynamic_form_bundle.system_form_page.repository:    
+            class: TMSolution\DynamicFormBundle\Repository\System\FormPage\Repository
+            arguments: ['@doctrine.orm.entity_manager','@tm_solution.dynamic_form_bundle.system_form_page.metadata','%locale%']   
+            
+        tm_solution.dynamic_form_bundle.system_form_page.metadata:    
+            class: Doctrine\ORM\Mapping\ClassMetaData
+            arguments: [TMSolution\DynamicFormBundle\Entity\FormPage]            
+        tm_solution.dynamic_form_bundle.system_form_page.typeahead:
+            class: TMSolution\DynamicFormBundle\Model\System\FormPage\Typeahead
+            arguments: ['@tm_solution.dynamic_form_bundle.system_form_page.model','@flexix_model.filter','@flexix_model.paginator', {'sort': 'entity.id', 'sortDirection':'asc'},'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_page.repository','%locale%','query',[ 'entity.name']]    
+    
+            
+            
+           

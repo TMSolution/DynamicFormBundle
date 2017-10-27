@@ -1,0 +1,107 @@
+TMSolution\DynamicFormBundle\Entity\FormDataType:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        technicalName:
+            type: field
+            setter: setTechnicalName
+            getter: getTechnicalName
+        formTypeOptions:
+            relation_type: manyToMany
+            type: entity
+            setter: null
+            getter: getFormTypeOptions
+    business: {  }
+    views:
+        filter:
+            - name
+            - technicalName
+            - formTypeOptions
+        list:
+            - name
+            - technicalName
+            - formTypeOptions
+        get:
+            - name
+            - technicalName
+            - formTypeOptions
+        insert:
+            - name
+            - technicalName
+            - formTypeOptions
+        edit:
+            - name
+            - technicalName
+            - formTypeOptions
+        sort:
+            - name
+            - technicalName
+            - formTypeOptions
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - technicalName
+                        line_3:
+                            - formTypeOptions
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formTypeOptions:
+                    name: formTypeOptions
+    type: entity
+    table: dynamic_form_data_type
+    field:
+        name:
+            name: name
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+        technicalName:
+            name: technicalName
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToMany:
+        formTypeOptions:
+            targetEntity: FormTypeOption
+            mappedBy: formDataTypes
+            inversedBy: null
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formTypeOptions
+            relation_type: manyToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormTypeOption
+            alias: form-type-option

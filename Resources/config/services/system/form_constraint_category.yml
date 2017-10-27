@@ -1,0 +1,156 @@
+parameters:    
+    tm_solution.dynamic_form_bundle.system_form_constraint_category.config: 
+        base:   
+            services:
+                 get:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.model'
+                        method: findOneById            
+        actions:        
+            new:
+                allowed: true
+                templates:
+                    widget: 'System\FormConstraintCategory\new.html.twig'
+                services:
+                    create:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.model'
+                        method: save
+                form: 
+                   action: new 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\InsertFormType'
+                
+                template_var: 'formConstraintCategory' 
+                adapter: 'app_bundle.data_adapter'
+                redirection:
+                    route_name: index   
+            edit:
+                allowed: true
+                templates:
+                    widget: 'System\FormConstraintCategory\edit.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\EditFormType' 
+                   action: edit
+                services:
+                    update:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.model'
+                        method: update
+                template_var: 'formConstraintCategory'
+                adapter: 'app_bundle.data_adapter'            
+            delete:
+                allowed: true
+                form: 
+                   action: delete
+                services:
+                    delete:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.model'
+                        method: delete
+                redirection:
+                    route_name: index        
+                templates:
+                    widget: 'System\FormConstraintCategory\delete.html.twig'
+                adapter: 'app_bundle.data_adapter'            
+            index:
+                allowed: true
+                templates:
+                    widget: 'System\FormConstraintCategory\index.html.twig'
+                adapter: 'app_bundle.data_adapter'      
+            list:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormConstraintCategory\list.html.twig' 
+                services:
+                    list:                        
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.paginator_model'                        
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\FilterFormType'
+                   action: list
+                   method: GET
+                template_var: 'formConstraintCategories'                
+                adapter: 'app_bundle.paginator_data_adapter'    
+            typeahead:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'blank.html.twig' 
+                services:
+                    list:
+                        name: 'tm_solution.dynamic_form_bundle.system_form_constraint_category.typeahead'
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\FilterFormType'
+                   action: list
+                   method: GET
+                adapter: 'flexix_model.typeahead_adapter'   
+            filter:
+                allowed:
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\FormConstraintCategory\filter.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\FilterFormType'
+                   method: GET
+                   action: index
+                adapter: 'app_bundle.data_adapter'            
+            get:
+                allowed: true
+                templates:
+                    widget: 'System\FormConstraintCategory\get.html.twig'
+                template_var: 'formConstraintCategory'
+                adapter: 'app_bundle.data_adapter'            
+            tabs:
+                allowed: true
+                templates:
+                    widget: 'System\FormConstraintCategory\tabs.html.twig'
+                template_var: 'formConstraintCategory'
+                adapter: 'app_bundle.data_adapter'     
+            
+services:
+        tm_solution.dynamic_form_bundle.system_form_constraint_category:
+            class: Flexix\ConfigurationBundle\Util\Configuration
+            arguments: ['%tm_solution.dynamic_form_bundle.system_form_constraint_category.config%']
+            tags:
+                - { name: flexix_prototype_controller.controller_configuration, module: 'system', alias: 'form-constraint-category' } 
+
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.form.type.edit:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\EditFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }
+        
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.form.type.insert:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\InsertFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }        
+        
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.form.type.filter:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\FormConstraintCategory\FilterFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }            
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.model:
+            class: TMSolution\DynamicFormBundle\Model\System\FormConstraintCategory\Model
+            arguments: ['@doctrine.orm.entity_manager',tm_solution.dynamic_form_bundle.system_form_constraint_category.repository ]
+      
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.paginator_model:    
+            class: TMSolution\DynamicFormBundle\Model\System\FormConstraintCategory\PaginatorModel
+            arguments: ['@flexix_model.model','@flexix_model.filter','@flexix_model.paginator',null,'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_constraint_category.repository','%locale%']   
+                
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.repository:    
+            class: TMSolution\DynamicFormBundle\Repository\System\FormConstraintCategory\Repository
+            arguments: ['@doctrine.orm.entity_manager','@tm_solution.dynamic_form_bundle.system_form_constraint_category.metadata','%locale%']   
+            
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.metadata:    
+            class: Doctrine\ORM\Mapping\ClassMetaData
+            arguments: [TMSolution\DynamicFormBundle\Entity\FormConstraintCategory]            
+        tm_solution.dynamic_form_bundle.system_form_constraint_category.typeahead:
+            class: TMSolution\DynamicFormBundle\Model\System\FormConstraintCategory\Typeahead
+            arguments: ['@tm_solution.dynamic_form_bundle.system_form_constraint_category.model','@flexix_model.filter','@flexix_model.paginator', {'sort': 'entity.id', 'sortDirection':'asc'},'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_form_constraint_category.repository','%locale%','query',[ 'entity.name']]    
+    
+            
+            
+           

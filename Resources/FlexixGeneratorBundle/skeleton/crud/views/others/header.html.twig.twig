@@ -1,0 +1,161 @@
+{% if view =='edit' -%}
+    <div class='card-header-wrap mobile-disabled'>
+        <div class='header-margin'></div>
+        <div class="card-header edit-header">
+            <div class="record-icon-block">
+                <div class="circle circle-big bgm-lightgray entity-{{entity|dash}}-color " data-entity-color="entity-{{entity|dash}}-color">
+                    <i class="entity entity-calendar entity-{{entity|dash}}-icon" data-entity-icon="entity-{{entity|dash}}-icon"  ></i>
+                </div>
+            </div>
+            <div class="entity-title-block">
+                <h2>{{ "{{ '"~translation_prefix~"._edit'|trans }}" }} / <strong>{{ '{{'~entity_singularized~'|truncate(100,true)}}' }}</strong> </h2>
+                <small class='bradcrumb'><a class="history_back" href="{{ "{{ path('index',{'module': driver.module, 'alias': driver.alias }) }}" }}" >{{ "{{ '"~translation_prefix~"._list'|trans }}" }}</a></small>
+                    {%- if options.insert -%}
+                    {#            <ul class="actions actions-list actions-title-block" >
+                                    <li class="dropdown">
+                                        <a href="" data-toggle="dropdown" aria-expanded="false">
+                                            <i class="zmdi zmdi-more-vert"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            {%- if options.getView %} 
+                                            <li>
+                                                <a class="link-get" href="{{ "{{ path('get', { 'module': driver.module, 'alias': driver.alias, '"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" }) }}" }}">
+                                                    <i class="zmdi zmdi-eye"></i> {{ "{{'system.get'|trans}}" }}
+                                                </a>
+                                            </li>
+                                            {%- endif %}
+                                            {%- if options.delete %}    
+                                            <li>
+                                                {{  "{{ render(controller('flexix_prototype_controller.entity_controller:deleteAction',{ 'request' : app.request,'module': driver.module, 'alias': driver.alias,'action': 'delete','"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" })) }}" }}
+                                            </li>
+                                            {%- endif %}
+                                        </ul>
+                                    </li>
+                                </ul>#}
+                    {%- endif %}
+            </div>
+        </div>
+    </div>
+
+    {%- elseif view in ['get','tabs'] -%} 
+    <div class='card-header-wrap entity-header'>
+        <div class='header-margin'></div>
+        <div class="card-header {{view}}-header">
+            <div class="record-icon-block">
+                <div class="circle circle-big bgm-lightgray entity-{{entity|dash}}-color " data-entity-color="entity-{{entity|dash}}-color"  >
+                    <i class="entity entity-calendar entity-{{entity|dash}}-icon" data-entity-icon="entity-{{entity|dash}}-icon"  ></i>
+                </div>
+            </div>
+            <div class="entity-title-block">
+                <h2 data-entity-name >{{ "{{ '"~translation_prefix~"."~entity_singularized|snake|lower~"'|trans }}" }} / <strong>{{ '{{'~entity_singularized~'|truncate(100,true)}}' }}</strong> </h2>
+                <small class='bradcrumb'><a class="history_back" href="{{ "{{ path('index',{'module': driver.module, 'alias': driver.alias }) }}" }}" >{{ "{{ '"~translation_prefix~"._list'|trans }}" }}</a></small>
+                    {%- if options.insert -%}
+                    {#<ul class="actions actions-list actions-title-block" >
+                        <li class="dropdown">
+                            <a href="" data-toggle="dropdown" aria-expanded="false">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                {%- if options.edit %}    
+                                <li>
+                                    <a  class="link-edit" data-context="{{entity_singularized|dash}}" href="{{ "{{ path('edit', {  'module': driver.module, 'alias': driver.alias,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" }) }}" }}">
+                                        <i class="zmdi zmdi-edit"></i> {{ "{{'system.edit'|trans}}" }}
+                                    </a>
+                                </li>
+                                {%- endif %}
+                                {%- if options.delete %}    
+                                <li>
+                                    {{  "{{ render(controller('flexix_prototype_controller.entity_controller:deleteAction',{ 'request' : app.request,'module': driver.module, 'alias': driver.alias,'action': 'delete','"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" })) }}" }}
+                                </li>
+                                {%- endif %}
+                            </ul>
+                        </li>
+                    </ul>#}
+                    {%- endif %}
+            </div>
+            <div class='index-data-count mobile-disabled' data-count>
+            </div>   
+
+        </div>
+    </div>
+
+    {%- elseif view == 'index' -%}   
+
+    <div class='card-header-wrap mobile-disabled'>
+        <div class='header-margin'></div>
+
+        <div class="card-header list-header mobile-disabled">
+            <div class="record-icon-block">
+                <div class="circle circle-big bgm-lightgray entity-{{entity|dash}}-color " data-entity-color="entity-{{entity|dash}}-color"  >
+                    <i class="entity entity-calendar entity-{{entity|dash}}-icon" data-entity-icon="entity-{{entity|dash}}-icon"  ></i>
+                </div>
+            </div>
+            <div class="entity-title-block">
+                <h2 class="view-title" >{{ "{{ '"~translation_prefix~"."~entity_pluralized|snake|lower~"'|trans }}" }} 
+                </h2>
+                <small  class="view-subtitle">{{ "{{ '"~translation_prefix~"._list'|trans }}" }} </small>
+            </div>
+            <div class='index-data-count mobile-disabled' data-count >
+                {%- if options.insert -%}
+                {#            <ul class="actions">
+                                <li>
+                                    <a class="link-new" data-module="{{'{{driver.module}}'}}" data-alias="{{'{{driver.alias}}'}}" href="{{ "{{ path('new',{'module': driver.module, 'alias': driver.alias}) }}" }}" aria-expanded="false">
+                                        <i class="zmdi zmdi-plus c-blue"></i>
+                                    </a>
+                                </li>
+                                {%- if options.filter %}
+                                <li>
+                                    <a class="filter-button" href="" aria-expanded="false">
+                                        <i class="zmdi zmdi-filter-list {{ "{% if app.request.query.get(driver.module~'_'~driver.alias~'_filter') %}c-green{% endif %}" }}"></i>
+                                    </a>
+                                </li>
+                                {%- endif %}
+                
+                                <li class="dropdown action-sort" data-toggle="tooltip" data-placement="bottom" title="{{ "{{ 'system._no_sort'|trans }}" }}">
+                                    <a href="" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="zmdi zmdi-sort-asc"></i>
+                                    </a>
+                
+                                    <ul class="dropdown-menu dm-icon dropdown-menu-right">
+                
+                                    </ul>
+                                </li>
+                
+                                <li class="dropdown">
+                                    <a href="" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="zmdi zmdi-more-vert"></i>
+                                    </a>
+                
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a href="{{ "{{ path('new',{'module': driver.module, 'alias': driver.alias}) }}" }}"> {{" {{'system.new'|trans}}"}}</a>
+                                        </li>
+                
+                                    </ul>
+                                </li>
+                
+                            </ul>#}
+                {%- endif %}
+
+            </div>
+        </div>
+    </div>
+
+
+    {%- elseif view == 'new' -%}
+    <div class='card-header-wrap mobile-disabled'>
+        <div class='header-margin'></div>
+        <div class="card-header new-header">
+            <div class="record-icon-block">
+                <div class="circle circle-big bgm-lightgray  entity-{{entity|dash}}-color" data-entity-color="entity-{{entity|dash}}-color" >
+                    <i class="entity entity-calendar entity-{{entity|dash}}-icon"  data-entity-icon="entity-{{entity|dash}}-icon" ></i>
+                </div>
+            </div>
+            <div class="entity-title-block">
+                <h2>{{ "{{ '"~translation_prefix~"._new'|trans }}" }}</h2>
+                <small class='bradcrumb'><a class="history_back" href="{{ "{{ path('index',{'module': driver.module, 'alias': driver.alias }) }}" }}" >{{ "{{ '"~translation_prefix~"._list'|trans }}" }}</a></small>
+            </div>
+
+        </div>
+    </div>    
+    {%- endif %}

@@ -1,0 +1,164 @@
+<?php
+
+namespace {{ bundle }}\Form\Type\{{module|capitalize}}\{{entity}};
+
+{% block use_statements %}
+use Flexix\PrototypeControllerBundle\Form\Type\ContextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Flexix\GeneratorBundle\Transformer\ArrayToJSONStringTransformer;
+use Flexix\HiddenEntityTypeBundle\Form\Type\HiddenEntityType;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ name }} extends ContextType
+{% endblock class_definition %}
+{
+{% block class_body %}
+
+    
+    {%- if entity_analyzer.getInsertFields|length > 0 %}
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            {%- for fieldname,field in entity_analyzer.getInsertFields -%}
+           
+            {%- if field.type!='entity' or (field.relation_type is defined and field.relation_type in ['manyToOne','oneToOne']) -%}
+            
+            {%- if field.type in {0: 'date',1: 'date_immutable'}%}                     
+                 
+            ->add('{{ fieldname }}',null, 
+                        ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy'
+                        'constraints' => [ 
+                        new Constraints\DateTime(),
+                        {%- if field.nullable is defined and  field.nullable == false -%}
+                        new Constraints\NotBlank()
+                        {%- endif -%}]
+                        ])
+
+            {%- elseif field.type in {0: 'datetime',1: 'datetime_immutable',2: 'datetimetz',3: 'datetimetz_immutable'} %}
+            
+            ->add('{{ fieldname }}', DateTimeType::class, 
+                        ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy',
+                        'constraints' => [ 
+                        new Constraints\DateTime()
+                        {%- if field.nullable is defined and field.nullable == false -%}
+                        ,new Constraints\NotBlank()
+                        {%- endif -%}]
+                        ])
+                        
+             
+            {%- elseif field.type=='entity' -%}
+
+
+                        ->add('{{ fieldname }}', Select2EntityType::class, [
+                        'multiple' => false,
+                        'remote_route' => 'typeahead',
+                        'remote_params' =>['module'=>'{{module}}', 'alias' =>'{{field.alias}}'],
+                        'class' => '{{field.fullNamespace}}',
+                        'primary_key' => 'id',
+                        'text_property' => 'name',
+                        'minimum_input_length' => 0,
+                        'allow_clear' => true,
+                        'delay' => 250,
+                        'cache' => true,
+                        'scroll' => true,
+                        'cache_timeout' => 60000, // if 'cache' is true
+                        'language' => 'pl',
+                        'placeholder' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        // 'object_manager' => $objectManager, // inject a custom object / entity manager 
+                    ])
+            {%- else %}
+            
+            ->add('{{ fieldname }}',null,  ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}','constraints' => [
+                     {%- if  field.nullable is defined and field.nullable == false -%}
+                        new Constraints\NotBlank()
+                     {%- endif -%}
+                     ]])
+            
+            {%- endif %}  
+            
+            {%- endif %}
+            {%- endfor %};          
+            {% for fieldname,field in entity_analyzer.getInsertFields -%}
+                {%- if field.type=='entity' %}
+            if ($this->context->get('{{fieldname}}')){     
+
+                $builder->add('{{ fieldname }}', HiddenEntityType::class, [
+                    'label' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                    'class' => '{{field.fullNamespace}}',
+                    {%- if field.relation_type=='manyToMany' %}
+                    'data' =>  $this->entityManager->getRepository('{{field.fullNamespace}}')->findById($this->context->get('{{fieldname}}')),
+                    'multiple' => true,
+                    {%- else -%}
+                    'data' =>  $this->entityManager->getRepository('{{field.fullNamespace}}')->findOneById($this->context->get('{{fieldname}}')),
+                    {%- endif -%}
+                    'empty_data' => NULL,
+                    'required' => false,
+                    'constraints' => [new Constraints\NotBlank()]
+                ]);
+
+            }
+      
+                
+                 {%- endif %}       
+            {%- endfor %}
+             
+             
+             
+             
+            {%- for fieldname,field in entity_analyzer.getInsertFields -%}
+                {%- if field.type in ['array','simple_array','json','json_array'] %}
+            
+            $builder->get('{{ fieldname }}')
+            ->addModelTransformer(new ArrayToJSONStringTransformer());
+                {%- endif %}
+            {%- endfor %};
+            
+    }
+    {% endif %}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => '{{ entity_class }}',
+            'attr' => array('novalidate' => 'novalidate')
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return '{{ module }}_{{ alias|snake }}_edit';
+    }
+
+{# BC with Symfony 2.7 #}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+
+{% endblock class_body %}
+}

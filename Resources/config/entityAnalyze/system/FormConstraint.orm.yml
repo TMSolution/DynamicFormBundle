@@ -1,0 +1,125 @@
+TMSolution\DynamicFormBundle\Entity\FormConstraint:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        technicalName:
+            type: field
+            setter: setTechnicalName
+            getter: getTechnicalName
+        options:
+            type: field
+            setter: setOptions
+            getter: getOptions
+        formConstraintCategory:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormConstraintCategory
+            getter: getFormConstraintCategory
+    business: {  }
+    views:
+        filter:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        list:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        get:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        insert:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        edit:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        sort:
+            - name
+            - technicalName
+            - options
+            - formConstraintCategory
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - technicalName
+                        line_3:
+                            - options
+                            - formConstraintCategory
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items: {  }
+    type: entity
+    table: dynamic_form_constraint
+    field:
+        name:
+            name: name
+            type: string
+            length: 4000
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        technicalName:
+            name: technicalName
+            type: string
+            length: 4000
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        options:
+            name: options
+            type: array
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        formConstraintCategory:
+            targetEntity: FormConstraintCategory
+            cascade: null
+            fetch: LAZY
+            inversedBy: formConstraints
+            name: formConstraintCategory
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormConstraintCategory
+            alias: form-constraint-category
+            unique: false
+            nullable: true

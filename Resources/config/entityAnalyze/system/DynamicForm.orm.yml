@@ -1,0 +1,80 @@
+TMSolution\DynamicFormBundle\Entity\DynamicForm:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        formPages:
+            relation_type: oneToMany
+            type: entity
+            setter: null
+            getter: getFormPages
+    business: {  }
+    views:
+        filter:
+            - name
+            - formPages
+        list:
+            - name
+        get:
+            - name
+        insert:
+            - name
+        edit:
+            - name
+        sort:
+            - name
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - formPages
+                        line_3: {  }
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formPages:
+                    name: formPages
+    type: entity
+    table: dynamic_form
+    field:
+        name:
+            name: name
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    oneToMany:
+        formPages:
+            mappedBy: dynamicForm
+            targetEntity: FormPage
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formPages
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormPage
+            alias: form-page

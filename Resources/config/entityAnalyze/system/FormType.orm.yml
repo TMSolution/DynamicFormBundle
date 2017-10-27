@@ -1,0 +1,208 @@
+TMSolution\DynamicFormBundle\Entity\FormType:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        technicalName:
+            type: field
+            setter: setTechnicalName
+            getter: getTechnicalName
+        className:
+            type: field
+            setter: setClassName
+            getter: getClassName
+        parent:
+            relation_type: manyToOne
+            type: entity
+            setter: setParent
+            getter: getParent
+        formTypeOptions:
+            relation_type: oneToMany
+            type: entity
+            setter: null
+            getter: getFormTypeOptions
+        active:
+            type: field
+            setter: setActive
+            getter: getActive
+        cssIconClass:
+            type: field
+            setter: setCssIconClass
+            getter: getCssIconClass
+        formItems:
+            relation_type: oneToMany
+            type: entity
+            setter: null
+            getter: getFormItems
+    business: {  }
+    views:
+        filter:
+            - name
+            - technicalName
+            - className
+            - parent
+            - formTypeOptions
+            - active
+            - cssIconClass
+            - formItems
+        list:
+            - name
+            - technicalName
+            - className
+            - parent
+            - active
+            - cssIconClass
+        get:
+            - name
+            - technicalName
+            - className
+            - parent
+            - active
+            - cssIconClass
+        insert:
+            - name
+            - technicalName
+            - className
+            - parent
+            - active
+            - cssIconClass
+        edit:
+            - name
+            - technicalName
+            - className
+            - parent
+            - active
+            - cssIconClass
+        sort:
+            - name
+            - technicalName
+            - className
+            - parent
+            - active
+            - cssIconClass
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - technicalName
+                        line_3:
+                            - className
+                            - parent
+                            - formTypeOptions
+                            - active
+                            - cssIconClass
+                            - formItems
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formTypeOptions:
+                    name: formTypeOptions
+                formItems:
+                    name: formItems
+    type: entity
+    table: dynamic_form_type
+    field:
+        name:
+            name: name
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+        technicalName:
+            name: technicalName
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+        className:
+            name: className
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+        active:
+            name: active
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        cssIconClass:
+            name: cssIconClass
+            type: string
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        parent:
+            targetEntity: FormType
+            cascade: null
+            fetch: LAZY
+            inversedBy: null
+            name: parent
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormType
+            alias: form-type
+            unique: false
+            nullable: true
+    oneToMany:
+        formTypeOptions:
+            mappedBy: formType
+            targetEntity: FormTypeOption
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formTypeOptions
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormTypeOption
+            alias: form-type-option
+        formItems:
+            mappedBy: formType
+            targetEntity: FormItem
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formItems
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormItem
+            alias: form-item

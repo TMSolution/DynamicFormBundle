@@ -1,0 +1,108 @@
+TMSolution\DynamicFormBundle\Entity\FormItemConstraint:
+    properties:
+        options:
+            type: field
+            setter: setOptions
+            getter: getOptions
+        formItem:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormItem
+            getter: getFormItem
+        constraint:
+            relation_type: manyToOne
+            type: entity
+            setter: setConstraint
+            getter: getConstraint
+    business: {  }
+    views:
+        filter:
+            - options
+            - formItem
+            - constraint
+        list:
+            - options
+            - formItem
+            - constraint
+        get:
+            - options
+            - formItem
+            - constraint
+        insert:
+            - options
+            - formItem
+            - constraint
+        edit:
+            - options
+            - formItem
+            - constraint
+        sort:
+            - options
+            - formItem
+            - constraint
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - options
+                        line_2:
+                            - formItem
+                        line_3:
+                            - constraint
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items: {  }
+    type: entity
+    table: dynamic_form_item_constraint
+    field:
+        options:
+            name: options
+            type: array
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        formItem:
+            targetEntity: FormItem
+            cascade:
+                - persist
+            fetch: LAZY
+            inversedBy: formItemConstraints
+            name: formItem
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormItem
+            alias: form-item
+            unique: false
+            nullable: false
+        constraint:
+            targetEntity: FormConstraint
+            cascade:
+                - persist
+            fetch: LAZY
+            inversedBy: formItemConstraints
+            name: constraint
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormConstraint
+            alias: form-constraint
+            unique: false
+            nullable: false

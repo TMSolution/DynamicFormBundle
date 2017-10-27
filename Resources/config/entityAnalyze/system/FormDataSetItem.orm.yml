@@ -1,0 +1,80 @@
+TMSolution\DynamicFormBundle\Entity\FormDataSetItem:
+    properties:
+        value:
+            type: field
+            setter: setValue
+            getter: getValue
+        formItem:
+            relation_type: oneToMany
+            type: entity
+            setter: addFormItem
+            getter: getFormItem
+    business: {  }
+    views:
+        filter:
+            - value
+            - formItem
+        list:
+            - value
+        get:
+            - value
+        insert:
+            - value
+        edit:
+            - value
+        sort:
+            - value
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - value
+                        line_2:
+                            - formItem
+                        line_3: {  }
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formItem:
+                    name: formItem
+    type: entity
+    table: dynamic_form_data_set_item
+    field:
+        value:
+            name: value
+            type: text
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    oneToMany:
+        formItem:
+            mappedBy: formType
+            targetEntity: FormItem
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formItem
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormItem
+            alias: form-item

@@ -1,0 +1,305 @@
+system:
+    constraint:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        constraints: Constraint
+        constraint: Constraint
+        name: name
+        technical_name: technical_name
+        options: options
+        constraint_category: constraint_category
+    constraint_category:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        constraint_categories: 'Constraint Category'
+        constraint_category: 'Constraint Category'
+        name: name
+        constraints: constraints
+    data_set:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        data_sets: 'Data Set'
+        data_set: 'Data Set'
+        creation_date: creation_date
+        form: form
+    data-set:
+        creation_date_date_min: creation_date_date_min
+        creation_date_date_max: creation_date_date_max
+        creation_date_date_time_min: creation_date_date_time_min
+        creation_date_date_time_max: creation_date_date_time_max
+    data_set_item:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        data_set_items: 'Data Set Item'
+        data_set_item: 'Data Set Item'
+        value: value
+        dynamic_from_item: dynamic_from_item
+    data_type:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        data_types: 'Data Type'
+        data_type: 'Data Type'
+        name: name
+        technical_name: technical_name
+        form_type_options: form_type_options
+    form:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        forms: Form
+        form: Form
+        name: name
+        pages: pages
+        form_pages: form_pages
+    form_type:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_types: 'Form Type'
+        form_type: 'Form Type'
+        name: name
+        technical_name: technical_name
+        class_name: class_name
+        parent: parent
+        form_type_options: form_type_options
+        active: active
+        css_icon_class: css_icon_class
+        items: items
+        form_items: form_items
+    form_type_option:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_type_options: 'Form Type Option'
+        form_type_option: 'Form Type Option'
+        default_value: default_value
+        form_type: form_type
+        form_type_option_dict: form_type_option_dict
+        data_types: data_types
+        option_required: option_required
+        active: active
+        position: position
+        is_advanced: is_advanced
+    form_type_option_dict:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_type_option_dicts: 'Form Type Option Dict'
+        form_type_option_dict: 'Form Type Option Dict'
+        name: name
+        technical_name: technical_name
+        form_type_options: form_type_options
+    item:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        items: Item
+        item: Item
+        name: name
+        form_type: form_type
+        page: page
+        item_options_values: item_options_values
+        position: position
+        required: required
+    item_constraint:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        item_constraints: 'Item Constraint'
+        item_constraint: 'Item Constraint'
+        options: options
+        item: item
+        constraint_dict: constraint_dict
+    item_option_value:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        item_option_values: 'Item Option Value'
+        item_option_value: 'Item Option Value'
+        value: value
+        item: item
+        form_type_option: form_type_option
+    page:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        pages: Page
+        page: Page
+        name: name
+        validate_on_page_change: validate_on_page_change
+        save_on_page_change: save_on_page_change
+        form: form
+        items: items
+    form_constraint:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_constraints: 'Form Constraint'
+        form_constraint: 'Form Constraint'
+        name: name
+        technical_name: technical_name
+        options: options
+        form_constraint_category: form_constraint_category
+    form_constraint_category:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_constraint_categories: 'Form Constraint Category'
+        form_constraint_category: 'Form Constraint Category'
+        name: name
+        form_constraints: form_constraints
+    form_data_set:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_data_sets: 'Form Data Set'
+        form_data_set: 'Form Data Set'
+        creation_date: creation_date
+        form: form
+        dynamic_form: dynamic_form
+    form-data-set:
+        creation_date_date_min: creation_date_date_min
+        creation_date_date_max: creation_date_date_max
+        creation_date_date_time_min: creation_date_date_time_min
+        creation_date_date_time_max: creation_date_date_time_max
+    form_data_set_item:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_data_set_items: 'Form Data Set Item'
+        form_data_set_item: 'Form Data Set Item'
+        value: value
+        form_item: form_item
+    form_data_type:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_data_types: 'Form Data Type'
+        form_data_type: 'Form Data Type'
+        name: name
+        technical_name: technical_name
+        form_type_options: form_type_options
+    form_item:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_items: 'Form Item'
+        form_item: 'Form Item'
+        name: name
+        form_type: form_type
+        form_page: form_page
+        form_item_options_values: form_item_options_values
+        position: position
+        required: required
+    form_item_constraint:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_item_constraints: 'Form Item Constraint'
+        form_item_constraint: 'Form Item Constraint'
+        options: options
+        form_item: form_item
+        constraint: constraint
+    form_item_option_value:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_item_option_values: 'Form Item Option Value'
+        form_item_option_value: 'Form Item Option Value'
+        value: value
+        form_item: form_item
+        form_type_option: form_type_option
+    form_page:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        form_pages: 'Form Page'
+        form_page: 'Form Page'
+        name: name
+        validate_on_page_change: validate_on_page_change
+        save_on_page_change: save_on_page_change
+        form: form
+        form_items: form_items
+        dynamic_form: dynamic_form
+    dynamic_form:
+        _filter: Filter
+        _list: List
+        _get: View
+        _edit: Edit
+        _new: New
+        _add: Add
+        dynamic_forms: 'Dynamic Form'
+        dynamic_form: 'Dynamic Form'
+        name: name
+        form_pages: form_pages

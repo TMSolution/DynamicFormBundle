@@ -1,0 +1,108 @@
+<?php
+
+namespace {{ bundle }}\Form\Type\{{module|capitalize}}\{{entity}};
+
+{% block use_statements %}
+    use Flexix\PrototypeControllerBundle\Form\Type\ContextType;
+    use Symfony\Component\Form\FormBuilderInterface;
+    use Symfony\Component\OptionsResolver\OptionsResolver;
+    use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
+    use Symfony\Component\Form\AbstractType;
+
+
+{% endblock use_statements %}
+
+{% block class_definition %}
+    class {{ name }} extends AbstractType
+{% endblock class_definition %}
+{
+{% block class_body %}
+
+
+    {%- if entity_analyzer.getFilterFields|length > 0 %}
+    /**
+    * {@inheritdoc}
+    */
+
+    public function buildForm(FormBuilderInterface $builder, array $options) {
+
+
+
+    $queryFields = [
+    'entity.name',
+    {%- for fieldname, field in entity_analyzer.getProperties() -%}
+    {%- if  field.type == 'entity' and  field.relation_type in ['oneToOne','manyToOne']  -%}
+    
+    {% set stringField=entity_analyzer_factory.getEntityAnalyzer(field.fullNamespace,module).getStringField %}
+    {% if stringField %}
+    '{{fieldname}}.{{stringField}}',
+    {%endif%}
+    {%- endif -%}
+    {%- endfor -%}
+    ];
+
+    $builder->add('keyword', Filters\TextFilterType::class, array(
+    'required' => false,
+    'mapped' =>false,
+    'attr' => array(
+    'placeholder' => 'Search..'
+    ),
+    'apply_filter' => function(QueryInterface $filterQuery, $field, $values) use ($queryFields) {
+
+    if ($values['value'] === null || $values['value'] === '') {
+    return null;
+    }
+
+    /** @var Expr $expr */
+    $expr = $filterQuery->getExpr();
+
+
+    $params = [];
+    $expression = $expr->orX();  ///andX for must match all
+
+
+    foreach ($queryFields as $field) {
+    $paramName = sprintf('p_%s', str_replace('.', '_', $field));
+    $ex = $expr->like($field, ':' . $paramName);
+    $expression->add($ex);
+    $params[$paramName] = '%' . $values['value'] . '%';
+    }
+
+    return $filterQuery->createCondition($expression, $params);
+    }));
+    }
+
+    {% endif %}
+
+        /**
+        * {@inheritdoc}
+        */
+        public function configureOptions(OptionsResolver $resolver)
+        {
+        $resolver->setDefaults(array(
+        'csrf_protection'   => false,
+        'validation_groups' => array('filtering')
+        ));
+        }
+
+        /**
+        * {@inheritdoc}
+        */
+        public function getBlockPrefix()
+        {
+        return '{{ module }}_{{ alias|snake }}_primary_filter';
+        }
+
+        {# BC with Symfony 2.7 #}
+
+        /**
+        * {@inheritdoc}
+        */
+        public function getName()
+        {
+        return $this->getBlockPrefix();
+        }
+
+
+        {% endblock class_body %}
+            }

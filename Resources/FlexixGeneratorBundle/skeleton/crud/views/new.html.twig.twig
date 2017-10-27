@@ -1,0 +1,35 @@
+{% block extends %}
+    {{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+
+{% block body %}
+    {{ "{% block container %}" }}
+
+    
+    <div class="card new-view">
+        {{ include('crud/views/others/header.html.twig.twig') -}}
+        <div class="card-body card-padding">
+            <div class="entity-parameters">
+
+                {{ '{% form_theme form "Form//filter_form.html.twig" %}' }}
+                <div class='row'>
+                    <div class='col-md-12 col-sm-12'>
+                        {% set dataRequestParams={ "module": module , "alias": alias}|json_encode() %} 
+                        {% set dataRequestParamsString= dataRequestParams~'|merge(context)|json_encode()' %} 
+                        {{ '{% set dataRequestParamsString='~dataRequestParamsString~' %}' }} 
+                        {{ '{{ form_start(form,{ "attr" : {"class":"insert-form", "data-request-params": dataRequestParamsString }}) }}' }}
+                        {{ '{{ form_widget(form) }}' }}
+                        <button type="submit" name="create" class="btn btn-primary pull-right" value="{{" {{'system.create'|trans}} "}}" >{{" {{'system.create'|trans}} "}}</button>
+                        {{ '{{ form_end(form) }}' }}
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class=" card-footer card-padding">
+
+        </div>    
+    </div>
+    {{ "{% endblock %}" }}
+{% endblock body %}

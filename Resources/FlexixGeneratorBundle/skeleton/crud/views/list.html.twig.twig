@@ -1,0 +1,264 @@
+{% block extends %}
+    {{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+
+{%- macro print_field(fields,entity_analyzer,options,translation_prefix,entity_singularized, link,show_fieldnames) -%}
+
+  {#{%- if link and   options.getView  %}
+    <a  data-toggle="tooltip" title="{{ '{{ ' ~ entity_singularized  ~ ' }}' }}" class="primary-link lazy" href="{{ "{{ path('tabs', { 'module': driver.module, 'alias': driver.alias,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" }) }}" }}">
+   {%- endif -%}   #}  
+  
+{%- for fieldname, field in entity_analyzer.getDefinitions(fields) -%}
+<span class='property'>
+     
+    {%- if show_fieldnames  and ( field.type != 'entity' or  field.relation_type in ['oneToOne','manyToOne'])   %}
+    <span class='property-name'>{{ "{{'"~translation_prefix~"."~fieldname|snake|lower~"'|trans}}" }}: </span> 
+    {%- endif %}
+
+    {% set property_name =  entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) %} 
+
+    
+    {#{%- if link and  loop.first and  options.getView  %}
+    <a  data-toggle="tooltip" title="{{ '{{ ' ~ entity_singularized  ~ ' }}' }}" class="primary-link lazy" href="{{ "{{ path('tabs', { 'module': driver.module, 'alias': driver.alias,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" }) }}" }}">
+        {%- if field.type not  in ['datetime','date','time', 'array','simple_array','json','json_array'] -%}
+        {{ '{{ ' ~ entity_singularized ~  ' }}' }}
+        {%- else %}
+        {{ '{{ ' ~ entity_singularized  ~ '|truncate(100,true) }}' }}
+        {%- endif %}
+    </a>#}
+
+    {#{%- else#}
+    {%- if field.type in ['datetime'] %} 
+
+
+    {{ '{% if ' ~ property_name ~ ' %}
+                        <span class="property-value">
+                            \{\{ ' ~ property_name ~ '|date(\'d-m-Y H:i\') }}
+                        </span>
+                     {% endif %}
+                     '}}
+
+    {%- elseif field.type in ['date'] %}
+
+    {{ '{% if ' ~ property_name ~ ' %} 
+                        <span class="property-value">
+                            \{\{ ' ~ property_name ~ '|date(\'d-m-Y\') }}
+                        </span>
+                     {% endif %}
+                    ' }}
+
+    {%- elseif field.type in ['time'] %}
+
+    {{ '{% if ' ~ property_name ~ ' %} 
+                        <span class="property-value">
+                            \{\{ ' ~ property_name  ~ '|date(\'H:i\') }}
+                        </span>
+                     {% endif %}
+                    ' }}
+
+    {%- elseif field.type in [ 'array','simple_array','json','json_array'] %}
+
+    {{ '{% if ' ~ property_name ~ ' %} 
+                        <span class="property-value">
+                          {{macros.printTree('~property_name~')}}
+                        </span>{% endif %}
+                    ' }}
+
+    {%- elseif field.type in ['boolean'] %}
+
+    {{ '{% if ' ~ property_name ~ ' %} 
+                        <span class="property-value">
+                            {{\'system.yes\'|trans}}
+                            {% else %}
+                            {{\'system.no\'|trans}}
+                        </span>
+                     {% endif %}
+                    ' }}
+
+    {%- elseif field.type =='entity'   %}
+    {% if field.relation_type in ['manyToOne','oneToOne'] %}
+        {{ ' <span data-toggle="tooltip" title="{{ "'~translation_prefix~'.'~field.targetEntity|snake|lower~'"|trans }}" class="property-value badge badge-entity entity-'~field.alias|dash~'-color">
+                        {{' ~ property_name  ~ '|truncate(25,true)}}
+                       </span>' }} 
+    {% endif %}
+    {%- else %}
+
+    {{ '<span class="property-value">
+                    {{ ' ~ entity_singularized ~ '.' ~ fieldname|replace({'_': ''}) ~ '|truncate(25) }}
+                    </span>' }}
+    {%- endif -%}
+    
+   {#{%- if link and options.getView  %}
+    </a>
+   {%- endif -%}#}
+</span>
+
+{%endfor -%}
+    {%- endmacro print_field -%}
+    
+    {%- macro record_body(entity,entity_analyzer,options,translation_prefix,entity_singularized,module,alias) -%}
+    {% import _self as list %}
+    
+    
+         
+        {% set dataRequestParamsString= '{ "module": "'~module~'", "alias": "'~alias~'"  ,"entityId": '~ entity_singularized ~ '.'~ entity_analyzer.id ~' } |merge(context)|json_encode()' %} 
+        {{ '{% set dataRequestParamsString='~dataRequestParamsString~' %}' }} 
+    
+        
+    
+                    <td>
+                         <div class='record-icon-block' ><div class='circle circle-big bgm-lightgray entity-{{entity|dash}}-color'><i class="entity entity-{{entity|dash}}-icon" data-entity-icon="entity-{{entity|dash}}-icon" data-entity-color="entity-{{entity|dash}}-color"  ></i></div></div>
+                    </td>    
+                    <td>
+                       
+                        <div class='record-content' > 
+                            <div class="first-line">
+                                <h4>
+                                    {%- if options.getView  %}
+                                        <a  data-toggle="tooltip" title="{{ '{{ ' ~ entity_singularized  ~ ' }}' }}" class="primary-link lazy" href="{{ "{{ path('tabs', { 'module': driver.module, 'alias': driver.alias,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" }) }}" }}">
+                                    {%- endif -%}  
+                                    {{ list.print_field(entity_analyzer.record.columns.column_1.lines.line_1,entity_analyzer,options,translation_prefix,entity_singularized, true, false) }}
+                                    {%- if options.getView  %}
+                                        </a>
+                                    {%- endif -%}
+                                </h4>
+                            </div>
+                            <div class="second-line">
+                                <h5>
+                                    {{ list.print_field(entity_analyzer.record.columns.column_1.lines.line_2,entity_analyzer,options,translation_prefix,entity_singularized,false, true) }}
+                                </h5>
+                            </div>
+                            <div class="third-line">
+                                {{ list.print_field(entity_analyzer.record.columns.column_1.lines.line_3,entity_analyzer,options,translation_prefix,entity_singularized,false,true) }}
+                            </div>
+                        </div>            
+                    </td>
+                    <td  class="td-actions"  >
+                        <ul class="actions actions-list" >
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="zmdi zmdi-more-vert"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    {%- if options.getView %}    
+                                    <li>
+                                        <a data-bind="record-{{module|snake}}-{{alias|snake}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }}"  data-request-params="{{dataRequestParamsString}}"    class="link-get" href="{{ "{{ path('get', { 'module': driver.module, 'alias': driver.alias, '"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~", 'context': context }) }}" }}">
+                                            <i class="zmdi zmdi-eye"></i> {{ "{{'system.get'|trans}}" }}
+                                        </a>
+                                    </li>
+                                    {%- endif %}
+                                    {%- if options.edit %}    
+                                    <li>
+                                        <a data-bind="record-{{module|snake}}-{{alias|snake}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }}"  data-request-params="{{dataRequestParamsString}}"    class="link-edit" href="{{ "{{ path('edit', {  'module': driver.module, 'alias': driver.alias,'"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~", 'context': context }) }}" }}">
+                                            <i class="zmdi zmdi-edit"></i> {{ "{{'system.edit'|trans}}" }}
+                                        </a>
+                                    </li>
+                                    {%- endif %}
+                                    {%- if options.delete %}    
+                                  {#  <li>
+                                        {{  "{{ render(controller('flexix_prototype_controller.entity_controller:deleteAction',{ 'request' : app.request,'module': driver.module, 'alias': driver.alias,'action': 'delete','"~ entity_analyzer.id ~"': " ~ entity_singularized ~ "."~ entity_analyzer.id ~" })) }}" }}
+                                    </li>#}
+                                    {%- endif %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </td>
+                    <td class='last'></td>
+                        
+    
+    {%- endmacro record_body -%}
+    
+    {% macro data_sort(entity_pluralized,entity_analyzer,translation_prefix,entity_analyzer_factory, module) %}
+       
+            {{ '{{ '~entity_pluralized~'.setUsedRoute("index") }}' }}
+            <li  class="{{ '{% if '~entity_pluralized~'.isSorted(\'entity.id\') %}sorted {% endif %}' }} {#default-sorted#}">
+                    {{ '{{ knp_pagination_sortable('~entity_pluralized~',"system._default_sort"|trans, "entity.id", { "class": "lazy-sort" },{}) }}' }}
+            </li>
+            {%- for fieldname, field in entity_analyzer.getSortFields() %}
+            
+            {% if  field.type != 'entity' %}
+            <li  {{ '{% if '~entity_pluralized~'.isSorted(\'entity.'~fieldname~'\') %} class="sorted" {% endif %}' }}>
+                    {{ '{{ knp_pagination_sortable('~entity_pluralized~',"'~translation_prefix~'.'~fieldname|snake|lower~'"|trans, "entity.'~fieldname~'", { "class": "lazy-sort" }) }}' }}
+            </li>
+            {% elseif field.relation_type in ['oneToOne','manyToOne']  %}
+                {% set stringField=entity_analyzer_factory.getEntityAnalyzer(field.fullNamespace,module).getStringField %}
+             {% if stringField %}   
+            <li  {{ '{% if '~entity_pluralized~'.isSorted(\''~fieldname~'.'~stringField~'\') %} class="sorted" {% endif %}' }}>
+                    {{ '{{ knp_pagination_sortable('~entity_pluralized~',"'~translation_prefix~'.'~fieldname|snake|lower~'"|trans, "'~fieldname~'.'~stringField~'", { "class": "lazy-sort" }) }}' }}
+            </li>
+            {% endif %}
+            {% endif %}
+            {%- endfor -%}
+    {%- endmacro data_sort -%}
+    
+    {% macro actual_sort(entity_pluralized,entity_analyzer,translation_prefix) %}
+           
+    {%- endmacro actual_sort -%}
+    
+    
+    
+    {% block body %}
+        {% import _self as list %}
+        {{ "{% block container %}" }}
+
+        {{ "{% import 'macros.html.twig' as macros %}" }}
+        {%- if options.pagination and options.lazyPagination %} 
+        {% set page=module|dash|lower~"_"~alias|dash|lower~"_page" %}
+        {{ "{% if is_sub_request %}" }}
+        {% endif %}
+        
+        <table class='table items-list' data-bind='count-{{module|snake}}-{{alias|snake}}' data-total-count="{{"{{" ~ entity_pluralized ~ ".getTotalItemCount()}}"}}"  data-sort-list='{{list.data_sort(entity_pluralized,entity_analyzer,translation_prefix,entity_analyzer_factory,module)}}' data-actual-sort='{{list.actual_sort()}}'  >
+            <tbody>
+                {%- if options.pagination and options.lazyPagination %} 
+                {{ "{% endif %}" }}
+                {% endif %}      
+                    
+                {{'{% if ' ~ entity_pluralized ~ ' is empty  and ' ~ entity_pluralized ~ '.paginatorOptions.filtered and ' ~ entity_pluralized ~ '.getTotalItemCount()==0%}'}}
+                    <tr>
+                        <td>
+                            <div class="text-center empty-list">
+                                <i class="zmdi zmdi-search"></i>
+                                <p>{{'{{"system._no_result"|trans}}'}}</p>
+                            </div>
+                        </td>
+                    </tr>
+                {{'{% elseif ' ~ entity_pluralized ~ ' is empty and not ' ~ entity_pluralized ~ '.paginatorOptions.filtered  %}'}}
+                    <tr>
+                        <td>
+                            <div class="text-center empty-list">
+                                <a data-bind="index-{{module|snake}}-{{alias|snake}}" class="link-new" data-module="{{'{{driver.module}}'}}" data-alias="{{'{{driver.alias}}'}}"  href="{{ "{{ path('new',{'module': driver.module, 'alias': driver.alias, 'context':context }) }}" }}"  aria-expanded="false">
+                                    <i class="zmdi zmdi-plus c-blue"></i>
+                                    <p>{{'{{"system.' ~ entity_singularized|snake ~ '._add"|trans}}'}}</p>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {{'{% endif %}'}}
+
+                
+                {{ '{% for ' ~ entity_singularized ~ ' in ' ~ entity_pluralized ~ ' %}' }}
+                <tr data-record-{{module|snake}}-{{alias|snake}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }} class="{{module}}-{{alias}}-{{ "{{"~ entity_singularized ~"."~ entity_analyzer.id ~"}}" }} {% if options.pagination and options.lazyPagination %}{{ '{% if loop.first %} {% do ' ~ entity_pluralized ~ '.setTemplate("lazy_pagination.html.twig") %}{% do ' ~ entity_pluralized ~ '.setParam("driver", driver) %}{{ knp_pagination_render(' ~ entity_pluralized ~ ') }} {% else %} "{% endif %}' }}{%else%}" {% endif %}  >
+                      {{ list.record_body(entity,entity_analyzer,options,translation_prefix,entity_singularized,module,alias) }}
+                </tr>   
+                {{ '{% endfor %}' }}
+                {%- if options.pagination and options.lazyPagination %}       
+                {{ "{% if is_sub_request %}" }}
+                {%- endif %}
+            </tbody>
+        </table>
+                {%- if options.pagination and options.lazyPagination %}   
+                {{ "{% endif %}" }}
+                {%- endif %}
+        {%- if options.pagination and not options.lazyPagination %}
+        
+        <div class="navigation">
+
+            {{ '
+                {% do ' ~ entity_pluralized ~ '.setParam("driver", driver) %}
+                {{ knp_pagination_render('~entity_pluralized~') }}' }}
+
+        </div>
+        {%- endif %}
+
+        {{ "{% endblock %}" }}
+    {% endblock body %}

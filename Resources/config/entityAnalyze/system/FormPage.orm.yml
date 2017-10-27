@@ -1,0 +1,146 @@
+TMSolution\DynamicFormBundle\Entity\FormPage:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        validateOnPageChange:
+            type: field
+            setter: setValidateOnPageChange
+            getter: getValidateOnPageChange
+        saveOnPageChange:
+            type: field
+            setter: setSaveOnPageChange
+            getter: getSaveOnPageChange
+        dynamicForm:
+            relation_type: manyToOne
+            type: entity
+            setter: null
+            getter: null
+        formItems:
+            relation_type: oneToMany
+            type: entity
+            setter: null
+            getter: getFormItems
+    business: {  }
+    views:
+        filter:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+            - formItems
+        list:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+        get:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+        insert:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+        edit:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+        sort:
+            - name
+            - validateOnPageChange
+            - saveOnPageChange
+            - dynamicForm
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - validateOnPageChange
+                        line_3:
+                            - saveOnPageChange
+                            - dynamicForm
+                            - formItems
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formItems:
+                    name: formItems
+    type: entity
+    table: dynamic_form_page
+    field:
+        name:
+            name: name
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        validateOnPageChange:
+            name: validateOnPageChange
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        saveOnPageChange:
+            name: saveOnPageChange
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        dynamicForm:
+            targetEntity: DynamicForm
+            cascade: null
+            fetch: LAZY
+            inversedBy: formPages
+            name: dynamicForm
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\DynamicForm
+            alias: dynamic-form
+            unique: false
+            nullable: false
+    oneToMany:
+        formItems:
+            mappedBy: formPage
+            targetEntity: FormItem
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formItems
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormItem
+            alias: form-item

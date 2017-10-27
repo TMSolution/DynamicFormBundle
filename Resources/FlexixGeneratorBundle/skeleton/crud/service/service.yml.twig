@@ -1,0 +1,209 @@
+parameters:    
+    {{service_path}}.config: 
+        base:
+            {%- if options.listView or options.getView  %}   
+            services:
+                 get:
+                        name: '{{model_suffix}}.model'
+                        method: findOneById
+            {%- endif%}            
+        actions:    
+            {%- if options.insert %}        
+            new:
+                allowed: true
+                templates:
+                    widget: '{{template_path}}\new.html.twig'
+                services:
+                    create:
+                        name: '{{model_suffix}}.model'
+                        method: save
+                form: 
+                   action: new 
+                   form_type: '{{form_path}}InsertFormType'
+                
+                template_var: '{{ template_var }}' 
+                adapter: 'app_bundle.data_adapter'
+                redirection:
+                    route_name: index
+            {%- endif %}
+            {%- if options.edit %}   
+            edit:
+                allowed: true
+                templates:
+                    widget: '{{template_path}}\edit.html.twig' 
+                form: 
+                   form_type: '{{form_path}}EditFormType' 
+                   action: edit
+                services:
+                    update:
+                        name: '{{model_suffix}}.model'
+                        method: update
+                template_var: '{{ template_var }}'
+                adapter: 'app_bundle.data_adapter'
+            {%- endif %}
+            {%- if options.delete %}
+            
+            delete:
+                allowed: true
+                form: 
+                   action: delete
+                services:
+                    delete:
+                        name: '{{model_suffix}}.model'
+                        method: delete
+                redirection:
+                    route_name: index        
+                templates:
+                    widget: '{{template_path}}\delete.html.twig'
+                adapter: 'app_bundle.data_adapter'    
+            {%- endif %}   
+            {%- if options.listView %}
+            
+            index:
+                allowed: true
+                templates:
+                    widget: '{{template_path}}\index.html.twig'
+                adapter: 'app_bundle.data_adapter'      
+            list:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: '{{template_path}}\list.html.twig' 
+                services:
+                    list:
+                        {%- if options.pagination %}
+                        
+                        name: '{{model_suffix}}.paginator_model'
+                        {%-else %}
+                        
+                        name: '{{model_suffix}}.model'
+                        {%-endif%}
+                        
+                        method: find
+                form: 
+                   form_type: '{{form_path}}FilterFormType'
+                   action: list
+                   method: GET
+                template_var: '{{ plural_template_var }}'   
+                {%- if options.pagination %}
+                
+                adapter: 'app_bundle.paginator_data_adapter'
+                {%- endif %}
+                {%- if options.filter %}    
+            typeahead:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'blank.html.twig' 
+                services:
+                    list:
+                        name: '{{service_path}}.typeahead'
+                        method: find
+                form: 
+                   form_type: '{{form_path}}FilterFormType'
+                   action: list
+                   method: GET
+                adapter: 'flexix_model.typeahead_adapter'   
+            filter:
+                allowed:
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: '{{template_path}}\filter.html.twig' 
+                form: 
+                   form_type: '{{form_path}}FilterFormType'
+                   method: GET
+                   action: index
+                adapter: 'app_bundle.data_adapter'
+                  
+            {%- endif %}
+            {%- endif %}       
+            {%- if options.getView %}
+            
+            get:
+                allowed: true
+                templates:
+                    widget: '{{template_path}}\get.html.twig'
+                template_var: '{{ template_var }}'
+                adapter: 'app_bundle.data_adapter'
+            {%- endif %}
+            {%- if options.tabsView %}
+            
+            tabs:
+                allowed: true
+                templates:
+                    widget: '{{template_path}}\tabs.html.twig'
+                template_var: '{{ template_var }}'
+                adapter: 'app_bundle.data_adapter'
+            {%- endif %}     
+            
+services:
+        {{service_path}}:
+            class: Flexix\ConfigurationBundle\Util\Configuration
+            arguments: ['%{{service_path}}.config%']
+            tags:
+                - { name: flexix_prototype_controller.controller_configuration, module: '{{module}}', alias: '{{alias}}' } 
+
+        {{service_path}}.form.type.edit:
+            class: {{form_path}}EditFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }
+        
+        {{service_path}}.form.type.insert:
+            class: {{form_path}}InsertFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }        
+        
+        {{service_path}}.form.type.filter:
+            class: {{form_path}}FilterFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }     
+                                     
+                
+{%- if options.customizedModel %}
+        {%- if not options.pagination %}
+        {{service_path}}.model:
+            class: {{model_dir}}Model
+            arguments: ['@doctrine.orm.entity_manager'] 
+        {%- endif %}
+        {%- if options.listView %}
+            {%- if options.pagination %}
+            
+        {{service_path}}.model:
+            class: {{model_dir}}Model
+            arguments: ['@doctrine.orm.entity_manager',{{service_path}}.repository ]
+      
+        {{service_path}}.paginator_model:    
+            class: {{model_dir}}PaginatorModel
+            arguments: ['@flexix_model.model','@flexix_model.filter','@flexix_model.paginator',null,'@knp_paginator.subscriber.sliding_pagination','@{{service_path}}.repository','%locale%']   
+                
+        {{service_path}}.repository:    
+            class: {{repository_dir}}Repository
+            arguments: ['@doctrine.orm.entity_manager','@{{service_path}}.metadata','%locale%']   
+            
+        {{service_path}}.metadata:    
+            class: Doctrine\ORM\Mapping\ClassMetaData
+            arguments: [{{entity_analyzer.getEntityClass}}]       
+      
+            {%- endif %} 
+            {%- if options.filter %}
+            
+        {{service_path}}.typeahead:
+            class: {{model_dir}}Typeahead
+            arguments: ['@{{service_path}}.model','@flexix_model.filter','@flexix_model.paginator', {'sort': 'entity.id', 'sortDirection':'asc'},'@knp_paginator.subscriber.sliding_pagination','@{{service_path}}.repository','%locale%','query',[ {%- for field  in entity_analyzer.typeaheadFields|keys %} 'entity.{{field}}'{% if not loop.last %},{% endif %}{% endfor -%} ]]            
+            {%- endif %}  
+        {%- endif %}
+{%- else %}
+        
+        
+{%- endif %}
+    
+    
+            
+            
+           

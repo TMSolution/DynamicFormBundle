@@ -1,0 +1,219 @@
+TMSolution\DynamicFormBundle\Entity\FormTypeOption:
+    properties:
+        defaultValue:
+            type: field
+            setter: setDefaultValue
+            getter: getDefaultValue
+        formType:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormType
+            getter: getFormType
+        formTypeOptionDict:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormTypeOptionDict
+            getter: getFormTypeOptionDict
+        dataTypes:
+            relation_type: manyToMany
+            type: entity
+            setter: null
+            getter: getDataTypes
+        optionRequired:
+            type: field
+            setter: setOptionRequired
+            getter: getOptionRequired
+        active:
+            type: field
+            setter: setActive
+            getter: getActive
+        position:
+            type: field
+            setter: setPosition
+            getter: getPosition
+        isAdvanced:
+            type: field
+            setter: setIsAdvanced
+            getter: getIsAdvanced
+    business: {  }
+    views:
+        filter:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        list:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        get:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        insert:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        edit:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        sort:
+            - defaultValue
+            - formType
+            - formTypeOptionDict
+            - dataTypes
+            - optionRequired
+            - active
+            - position
+            - isAdvanced
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - defaultValue
+                        line_2:
+                            - formType
+                        line_3:
+                            - formTypeOptionDict
+                            - dataTypes
+                            - optionRequired
+                            - active
+                            - position
+                            - isAdvanced
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                dataTypes:
+                    name: dataTypes
+    type: entity
+    table: dynamic_form_type_option
+    field:
+        defaultValue:
+            name: defaultValue
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        optionRequired:
+            name: optionRequired
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        active:
+            name: active
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        position:
+            name: position
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        isAdvanced:
+            name: isAdvanced
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        formType:
+            targetEntity: FormType
+            cascade: null
+            fetch: LAZY
+            inversedBy: formTypeOptions
+            name: formType
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormType
+            alias: form-type
+            unique: false
+            nullable: false
+        formTypeOptionDict:
+            targetEntity: FormTypeOptionDict
+            cascade: null
+            fetch: LAZY
+            inversedBy: null
+            name: formTypeOptionDict
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormTypeOptionDict
+            alias: form-type-option-dict
+            unique: false
+            nullable: false
+    manyToMany:
+        dataTypes:
+            targetEntity: FormDataType
+            mappedBy: null
+            inversedBy: formTypeOptions
+            cascade: null
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: dataTypes
+            relation_type: manyToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormDataType
+            alias: form-data-type
+            unique: false
+            nullable: true

@@ -1,0 +1,171 @@
+TMSolution\DynamicFormBundle\Entity\FormItem:
+    properties:
+        name:
+            type: field
+            setter: setName
+            getter: getName
+        formType:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormType
+            getter: getFormType
+        formPage:
+            relation_type: manyToOne
+            type: entity
+            setter: setFormPage
+            getter: getFormPage
+        formItemOptionsValues:
+            relation_type: oneToMany
+            type: entity
+            setter: null
+            getter: getFormItemOptionsValues
+        position:
+            type: field
+            setter: setPosition
+            getter: getPosition
+        required:
+            type: field
+            setter: setRequired
+            getter: getRequired
+    business: {  }
+    views:
+        filter:
+            - name
+            - formType
+            - formPage
+            - formItemOptionsValues
+            - position
+            - required
+        list:
+            - name
+            - formType
+            - formPage
+            - position
+            - required
+        get:
+            - name
+            - formType
+            - formPage
+            - position
+            - required
+        insert:
+            - name
+            - formType
+            - formPage
+            - position
+            - required
+        edit:
+            - name
+            - formType
+            - formPage
+            - position
+            - required
+        sort:
+            - name
+            - formType
+            - formPage
+            - position
+            - required
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - name
+                        line_2:
+                            - formType
+                        line_3:
+                            - formPage
+                            - formItemOptionsValues
+                            - position
+                            - required
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items:
+                formItemOptionsValues:
+                    name: formItemOptionsValues
+    type: entity
+    table: dynamic_form_item
+    field:
+        name:
+            name: name
+            type: string
+            length: 300
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        position:
+            name: position
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+        required:
+            name: required
+            type: boolean
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        formType:
+            targetEntity: FormType
+            cascade: null
+            fetch: LAZY
+            inversedBy: formItems
+            name: formType
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormType
+            alias: form-type
+            unique: false
+            nullable: false
+        formPage:
+            targetEntity: FormPage
+            cascade: null
+            fetch: LAZY
+            inversedBy: formItems
+            name: formPage
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormPage
+            alias: form-page
+            unique: false
+            nullable: false
+    oneToMany:
+        formItemOptionsValues:
+            mappedBy: formItem
+            targetEntity: FormItemOptionValue
+            cascade:
+                - persist
+                - remove
+            fetch: LAZY
+            orphanRemoval: false
+            indexBy: null
+            name: formItemOptionsValues
+            relation_type: oneToMany
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\FormItemOptionValue
+            alias: form-item-option-value

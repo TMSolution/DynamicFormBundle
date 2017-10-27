@@ -1,0 +1,73 @@
+{% block extends %}
+    {{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+
+
+{%- macro create_index_request_data(fieldname,field,entity_analyzer,entity_singularized, entity_namespace, module, tab_id) -%}
+{% set relatedFieldName= entity_analyzer.getRelatedFieldName(fieldname,field,entity_singularized, entity_namespace)%}
+data-request-params='{ "action": "index", "module": "{{module}}", "alias": "{{field.targetEntity|dash}}",  "id": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}", "tab": "{{tab_id}}", "context": { "{{relatedFieldName}}": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}"  }  }'    
+data-address-params='{ "action": "{{ '{{driver.action}}' }}",  "module": "{{module}}", "alias": "{{ '{{driver.alias}}' }}",  "id": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}", "tab": "{{tab_id}}", "context": { "{{relatedFieldName}}": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}"  }  }'    
+{%- endmacro create_index_request_data -%}
+
+{%- macro create_get_request_data(entity_analyzer,entity_singularized, entity_namespace, module, alias) -%}
+
+data-request-params='{ "action": "get", "module": "{{module}}", "alias": "{{alias}}",  "id": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}" }'    
+data-address-params='{ "action": "{{ '{{driver.action}}' }}",  "module": "{{module}}", "alias": "{{ '{{driver.alias}}' }}",  "id": "{{ '{{'~entity_singularized~'.'~entity_analyzer.id~'}}' }}" }'    
+{%- endmacro create_get_request_data -%}
+
+
+
+{% block body %}
+    {% import _self as tabs %}
+    {{ "{% block container %}" }}
+    {{ '{% set tab =app.request.get("tab") %}' }}  
+    {{ '{% set is_sub_request=true %}' }}
+
+    <div class="card tabs-head">
+
+        {{ include('crud/views/others/header.html.twig.twig') }}
+        <div class="card-body card-tab-nav ">
+            <ul class="tab-nav" data-fixed-tab-nav role="tablist">
+                <li class="view-tab {{ '{% if not tab or tab==null or tab=="'~alias~'" %} active {%else%} {% endif %} lazy-tab ' }}"   >
+
+                    <a {{tabs.create_get_request_data(entity_analyzer,entity_singularized, entity_namespace, module, alias)}}  href="#{{entity_singularized|dash}}" aria-controls="{{entity_singularized|dash}}" role="tab" data-toggle="tab" aria-expanded="{{ '{% if not tab or tab==null %}true{% endif %}' }}">{{ '{{ "'~translation_prefix~'._get"|trans}}' }}
+                    </a>
+                </li>
+                {%- for fieldname,field  in entity_analyzer.tabsFields -%}
+                        
+                    {% set tab_id=entity_singularized|dash~'-'~fieldname|dash %}
+                    {% set filterFormName = module|snake~'_'~field.targetEntity|snake~'_filter' %}
+                
+                <li class="{{ '{% if tab=="'~tab_id~'" %} active {% endif %}' }} lazy-tab" >
+                    <a {{tabs.create_index_request_data(fieldname,field,entity_analyzer,entity_singularized, entity_namespace, module, tab_id)}} href="#{{tab_id}}" aria-controls="#{{tab_id}}" role="tab" data-toggle="tab" aria-expanded="{{ '{% if not tab or tab=="'~tab_id~'" %}true{% endif %}' }}">{{ '{{ "'~module~'.'~ field.targetEntity|snake ~'.'~fieldname|pluralize|snake~'"|trans}}' }}</a>
+                </li>
+                {%- endfor -%}
+
+            </ul>
+        </div>
+    </div>
+    <div class="card tabs-content">
+        <div class="card-body ">
+            <div class="tab-content">
+                <div role="tabpanel" class="view-tab-pane tab-pane {{ '{% if not tab or tab==null or tab=="'~alias~'"  %} active {% endif %}' }}" id="{{entity_singularized|dash}}">
+
+                    {{ '{% if not tab or tab==null or tab=="'~alias~'" %}{{ include ("/'~module|ucfirst ~'/'~entity~'/get.html.twig")}}{% endif %}' }}
+                </div>
+                {% for fieldname,field  in entity_analyzer.tabsFields %}
+                    {% set tab_id=entity_singularized|dash~'-'~fieldname|dash %}   
+                    {% set relatedFieldName= entity_analyzer.getRelatedFieldName(fieldname,field,entity_singularized, entity_namespace)%}
+                    {% set filterFormName = module|snake~'_'~field.targetEntity|snake~'_filter' %}
+                    <div role="tabpanel" class="tab-pane {{ '{% if  tab=="'~tab_id~'" %}active{% endif %}' }}" id="{{tab_id}}">
+
+                                
+                        
+                        {{ '{% if tab=="'~tab_id|dash~'" %} {{ render(path("index",app.request.query| merge({ "module": driver.module, "alias": "'~field.targetEntity|dash~'","action": "index", "context": { "'~relatedFieldName~'": '~entity_singularized~'.'~entity_analyzer.id~'  }}))) }}{% endif %}' }}
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+    {{ "{% endblock %}" }}
+{% endblock body %}

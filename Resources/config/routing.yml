@@ -1,0 +1,6 @@
+dynamic_form_get_form_view:
+    path: "{module}/{alias}/edit-form-view/{id}"
+    defaults: { _controller: "flexix_prototype_controller.entity_controller:editAction",  "action": "edit_form_view", format: ~, id: null, module: null }
+    methods:  [GET, POST]
+    options:
+        expose: true

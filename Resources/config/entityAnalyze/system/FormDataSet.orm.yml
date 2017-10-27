@@ -1,0 +1,104 @@
+TMSolution\DynamicFormBundle\Entity\FormDataSet:
+    properties:
+        creationDate:
+            type: field
+            setter: setCreationDate
+            getter: getCreationDate
+        formDataSet:
+            type: field
+            setter: setFormDataSet
+            getter: getFormDataSet
+        dynamicForm:
+            relation_type: manyToOne
+            type: entity
+            setter: null
+            getter: null
+    business: {  }
+    views:
+        filter:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        list:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        get:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        insert:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        edit:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        sort:
+            - creationDate
+            - formDataSet
+            - dynamicForm
+        record:
+            columns:
+                column_1:
+                    lines:
+                        line_1:
+                            - creationDate
+                        line_2:
+                            - formDataSet
+                        line_3:
+                            - dynamicForm
+        typeahead: {  }
+        tabs:
+            overwrite:
+                get: false
+                edit: false
+                insert: false
+            items: {  }
+    type: entity
+    table: dynamic_form_data_set
+    field:
+        creationDate:
+            name: creationDate
+            type: datetime
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+        formDataSet:
+            name: formDataSet
+            type: text
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: true
+            options: {  }
+            columnDefinition: null
+    id:
+        id:
+            name: id
+            type: integer
+            length: null
+            precision: 0
+            scale: 0
+            unique: false
+            nullable: false
+            options: {  }
+            columnDefinition: null
+    manyToOne:
+        dynamicForm:
+            targetEntity: DynamicForm
+            cascade: null
+            fetch: LAZY
+            inversedBy: null
+            name: dynamicForm
+            relation_type: manyToOne
+            fullNamespace: TMSolution\DynamicFormBundle\Entity\DynamicForm
+            alias: dynamic-form
+            unique: false
+            nullable: false

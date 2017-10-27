@@ -1,0 +1,258 @@
+<?php
+
+namespace {{ bundle }}\Form\Type\{{module|capitalize}}\{{entity}};
+
+{% block use_statements %}
+use Flexix\PrototypeControllerBundle\Form\Type\ContextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints;
+use Flexix\GeneratorBundle\Transformer\ArrayToJSONStringTransformer;
+use Flexix\HiddenEntityTypeBundle\Form\Type\HiddenEntityType;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Lexik\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
+
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ name }} extends ContextType
+{% endblock class_definition %}
+{
+{% block class_body %}
+    
+    
+    {%- if entity_analyzer.getFilterFields|length > 0 %}
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+    
+      
+    
+      
+        $builder
+        ->add('_keyword', Filters\TextFilterType::class, array(
+            'required' => false,
+            'mapped' =>false,
+            'attr' => array(
+            'placeholder' => 'Search..'
+            ),
+            'apply_filter' => function(QueryInterface $filterQuery, $field, $values)  {
+
+            if ($values['value'] === null || $values['value'] === '') {
+            return null;
+            }
+
+            /** @var Expr $expr */
+            $expr = $filterQuery->getExpr();
+
+             $queryFields = [
+             
+            {%- for fieldname, field in entity_analyzer.getProperties() -%}
+            
+            {%- if  field.type not in  ['array','simple_array','json', 'json_array','entity'] -%}
+                'entity.{{fieldname}}',
+            {%- endif -%}
+            
+            {%- if  field.type == 'entity' and  field.relation_type in ['oneToOne','manyToOne']  -%}
+            {% set stringField=entity_analyzer_factory.getEntityAnalyzer(field.fullNamespace,module).getStringField %}
+            {% if stringField %}
+            '{{fieldname}}.{{stringField}}',
+            {%endif%}
+            {%- endif -%}
+            {%- endfor -%}
+            
+            ];
+
+            $params = [];
+            $expression = $expr->orX();  ///andX for must match all
+
+
+            foreach ($queryFields as $field) {
+            $paramName = sprintf('p_%s', str_replace('.', '_', $field));
+            $ex = $expr->like($field, ':' . $paramName);
+            $expression->add($ex);
+            $params[$paramName] = '%' . $values['value'] . '%';
+            }
+
+            return $filterQuery->createCondition($expression, $params);
+            }))
+        ->add('{{ entity_analyzer.getId }}',Filters\NumberFilterType::class, ['label' => '{{translation_prefix}}.id'])
+            {%- for fieldname,field in entity_analyzer.getFilterFields -%}
+                
+                {%- if field.type!='entity' -%}
+     
+                {%- if field.type in ['string', 'text','guid','binary', 'blob'] %}
+                
+                ->add('{{ fieldname }}',Filters\TextFilterType::class, ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}'])
+                
+                {%- elseif field.type =='boolean' %}
+               
+                ->add('{{ fieldname }}',Filters\BooleanFilterType::class, ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}','translation_domain' => 'messages'])
+                {%- elseif field.type in ['smallint','integer','bigint','decimal','float'] %}
+                
+                ->add('{{ fieldname }}',Filters\NumberFilterType::class, ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}'])
+                {%- elseif field.type in ['date','date_immutable'] %}
+               
+                ->add('{{ fieldname }}',Filters\DateTimeRangeFilterType::class, 
+                [
+                  'label' => false ,
+                  'left_date_options' =>[
+                        'label' => '{{module}}.{{alias}}_date_min',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy',
+                        'attr' => [ 'class' => 'datetimepicker', 'readonly'=>'true']
+                    ],
+                   'right_date_options' => [
+                        'label' => '{{module}}.{{alias}}_date_max',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy',
+                        'attr' => [ 'class' => 'datetimepicker', 'readonly'=>'true']
+                    ]
+                ])
+                {%- elseif field.type in  ['datetime','datetime_immutable','datetimetz','datetimetz_immutable'] %}
+                
+                ->add('{{ fieldname }}',Filters\DateTimeRangeFilterType::class, 
+                [
+                  'label' => false,  
+                  'left_datetime_options' =>[
+                        'label' => '{{translation_prefix}}.{{fieldname|snake|lower}}_date_time_min',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy',
+                        'attr' => [ 'class' => 'datetimepicker', 'readonly'=>'true']
+                    ],
+                   'right_datetime_options' => [
+                        'label' => '{{translation_prefix}}.{{fieldname|snake|lower}}_date_time_max',
+                        'widget' => 'single_text',
+                        'format' => 'dd.MM.yyyy',
+                        'attr' => [ 'class' => 'datetimepicker', 'readonly'=>'true']
+                    ]
+                ]) 
+                
+                {%- elseif field.type in  ['array','simple_array','json', 'json_array'] %}
+                
+                /*->add('{{ fieldname }}',Filters\ChoiceFilterType::class)*/
+                
+                 {%- elseif field.type=='entity' -%}
+
+                 
+                 
+                        ->add('{{ fieldname }}', Select2EntityType::class, [
+                        'multiple' => false,
+                        'label' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        'remote_route' => 'typeahead',
+                        'remote_params' =>['module'=>'{{module}}', 'alias' =>'{{field.alias}}'],
+                        'class' => '{{field.fullNamespace}}',
+                        'primary_key' => 'id',
+                        'text_property' => 'name',
+                        'minimum_input_length' => 0,
+                        'allow_clear' => true,
+                        'delay' => 250,
+                        'cache' => true,
+                        'scroll' => true,
+                        'cache_timeout' => 60000, // if 'cache' is true
+                        'language' => 'pl',
+                        'placeholder' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        // 'object_manager' => $objectManager, // inject a custom object / entity manager 
+                    ])       
+                
+                {%- else  %}
+                
+                ->add('{{ fieldname }}',null, ['label' => '{{translation_prefix}}.{{fieldname|snake|lower}}'])
+                {% endif %}
+                {%- endif %}
+            {%- endfor %};
+            
+            
+            
+            {% for fieldname,field in entity_analyzer.getFilterFields -%}
+            {%- if field.type=='entity' -%}
+                {%- if field.relation_type in ['manyToMany','manyToOne'] %}
+            if ( $this->context->get('{{fieldname}}')){     
+
+                $builder->add('{{ fieldname }}', HiddenEntityType::class, [
+                    'label' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                    'class' => '{{field.fullNamespace}}',
+                    'required' => false,
+                    'constraints' => [new Constraints\NotBlank()]
+                ]);
+
+            }
+            else
+            {
+               
+                $builder->add('{{ fieldname }}', Select2EntityType::class, [
+                        'multiple' => false,
+                        'remote_route' => 'typeahead',
+                        'remote_params' =>['module'=>'{{module}}', 'alias' =>'{{field.alias}}'],
+                        'class' => '{{field.fullNamespace}}',
+                        'primary_key' => 'id',
+                        'text_property' => 'name',
+                        'minimum_input_length' => 0,
+                        'allow_clear' => true,
+                        'delay' => 250,
+                        'cache' => true,
+                        'scroll' => true,
+                        'cache_timeout' => 60000, // if 'cache' is true
+                        'language' => 'pl',
+                        'placeholder' => '{{translation_prefix}}.{{fieldname|snake|lower}}',
+                        // 'object_manager' => $objectManager, // inject a custom object / entity manager 
+                    ]);       
+                    
+                 
+            
+            }    
+              {%- endif -%}
+                 {%- endif %}       
+            {%- endfor %}
+            
+            
+            
+            
+            {%- for fieldname,field in entity_analyzer.getFilterFields -%}
+                {%- if field.type in ['array','simple_array','json','json_array'] %}
+            
+            /*$builder->get('{{ fieldname }}')
+            ->addModelTransformer(new ArrayToJSONStringTransformer());*/
+                {%- endif %}
+            {%- endfor %};
+            
+            
+    }
+    {% endif %}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'csrf_protection'   => false,
+            'validation_groups' => array('filtering')
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return '{{ module }}_{{ alias|snake }}_filter';
+    }
+
+{# BC with Symfony 2.7 #}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+
+{% endblock class_body %}
+}

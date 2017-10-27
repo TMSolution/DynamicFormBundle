@@ -1,0 +1,32 @@
+{% block extends %}
+    {{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+{% block body %}
+    {{ "{% block container %}" }}
+    {{ "{% htmlcompress  %}" }}
+    <div class="index" data-index-{{module|snake}}-{{alias|snake}} {%- if options.filter %}
+         data-filter='
+         <div class="filter-block"> {{  "{{ render( path('filter',app.request.query| merge({ 'module': driver.module, 'alias': driver.alias,'action': 'filter', context: context }))) }}" }}</div>' {%- endif %} 
+         >
+        <div class="card index-head">
+            {{ include('crud/views/others/header.html.twig.twig') -}}
+            
+        </div>
+        <div class="card index-list list-block">
+            <div  class="card-body">
+                {{  "{{ render( path('list',app.request.query| merge({ 'module': driver.module, 'alias': driver.alias,'action': 'list',context: context }))) }}" }}
+            </div>      
+        </div>
+        <div class="circle circle-big mobile-button bgm-red">
+            <a  data-bind="index-{{module|snake}}-{{alias|snake}}" class="link-new" data-module="{{'{{driver.module}}'}}" data-alias="{{'{{driver.alias}}'}}" href="{{ "{{ path('new',{'module': driver.module, 'alias': driver.alias, 'context': context}) }}" }}" aria-expanded="false">
+                <i class="zmdi zmdi-plus"></i>
+            </a>
+        </div>    
+    </div>
+    {{ "{% endhtmlcompress %}" }}
+    {{ "{% endblock %}" }}
+{% endblock body %}
+
+
+
+

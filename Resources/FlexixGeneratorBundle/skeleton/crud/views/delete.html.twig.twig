@@ -1,0 +1,11 @@
+{% block body %}
+    <a href="#" class="delete-link">
+        <i class="zmdi zmdi-delete"></i>
+        {{ "{{'system.delete'|trans}}" }}
+    </a>
+    {{ '{% form_theme form "Form//filter_form.html.twig" %}' }}
+    {{ '{{ form_start(form,{ "attr" : {"class":"delete-form", "data-module":"'~module~'", "data-alias":"'~alias~'" }}) }}' }}
+    {{ '{{ form_widget(form) }}' }}
+
+    {{ '{{ form_end(form) }}' }}
+{% endblock body %}

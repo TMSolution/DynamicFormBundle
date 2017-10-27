@@ -1,0 +1,26 @@
+{% block extends %}
+{{ "{% extends is_sub_request or is_xml_http_request ?  'blank.html.twig':'index.html.twig'  %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% block container %}" }}
+  {{ '{% form_theme form "Form//filter_form.html.twig" %}' }}
+   
+    {{ '{{ form_start(form,{ "attr": { "class": "form-filter", "data-module":"'~module~'", "data-alias":"'~alias~'" } }) }}' }}
+    
+       {{ '{{ form_widget(form._keyword,{"attr":{"data-keyword-field":true,"class": "hidden"}}) }}' }}  
+        {% for fieldname,field in entity_analyzer.filterFields %} 
+            {%-  if field.type not  in {0: 'array',1: 'simple_array',2: 'json',3: 'json_array'} %}
+            
+            {%- if  field.type!='entity' or ( field.type=='entity' and  field.relation_type in ['manyToMany','manyToOne'] ) -%}
+                 
+            {{ '{{ form_row(form.'~fieldname~') }}' }}
+            
+            {%- endif -%}
+            
+            {%- endif %}
+        {% endfor %}
+       
+    {{ '{{ form_end(form) }}' }}
+{{ "{% endblock %}" }}
+{% endblock body %}

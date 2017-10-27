@@ -1,0 +1,174 @@
+parameters:    
+    tm_solution.dynamic_form_bundle.system_dynamic_form.config: 
+        base:   
+            services:
+                 get:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: findOneById            
+        actions:        
+            new:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\new.html.twig'
+                services:
+                    create:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: save
+                form: 
+                   action: new 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\InsertFormType'
+                
+                template_var: 'dynamicForm' 
+                adapter: 'app_bundle.data_adapter'
+                redirection:
+                    route_name: index   
+            edit:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\edit.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\EditFormType' 
+                   action: edit
+                services:
+                    update:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: update
+                template_var: 'dynamicForm'
+                adapter: 'app_bundle.data_adapter'
+                
+            edit_form_view:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\edit_form_view.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\EditFormType' 
+                   action: edit
+                services:
+                    get:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: getDynamicForm
+                    update:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: update
+                template_var: 'dynamicForm'
+                adapter: 'app_bundle.data_adapter'    
+                
+            delete:
+                allowed: true
+                form: 
+                   action: delete
+                services:
+                    delete:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.model'
+                        method: delete
+                redirection:
+                    route_name: index        
+                templates:
+                    widget: 'System\DynamicForm\delete.html.twig'
+                adapter: 'app_bundle.data_adapter'            
+            index:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\index.html.twig'
+                adapter: 'app_bundle.data_adapter'      
+            list:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\DynamicForm\list.html.twig' 
+                services:
+                    list:                        
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.paginator_model'                        
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\FilterFormType'
+                   action: list
+                   method: GET
+                template_var: 'dynamicForms'                
+                adapter: 'app_bundle.paginator_data_adapter'    
+            typeahead:
+                allowed: 
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'blank.html.twig' 
+                services:
+                    list:
+                        name: 'tm_solution.dynamic_form_bundle.system_dynamic_form.typeahead'
+                        method: find
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\FilterFormType'
+                   action: list
+                   method: GET
+                adapter: 'flexix_model.typeahead_adapter'   
+            filter:
+                allowed:
+                    - xhttp
+                    - subrequest
+                templates:
+                    widget: 'System\DynamicForm\filter.html.twig' 
+                form: 
+                   form_type: 'TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\FilterFormType'
+                   method: GET
+                   action: index
+                adapter: 'app_bundle.data_adapter'            
+            get:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\get.html.twig'
+                template_var: 'dynamicForm'
+                adapter: 'app_bundle.data_adapter'
+            tabs:
+                allowed: true
+                templates:
+                    widget: 'System\DynamicForm\tabs.html.twig'
+                template_var: 'dynamicForm'
+                adapter: 'app_bundle.data_adapter'     
+            
+services:
+        tm_solution.dynamic_form_bundle.system_dynamic_form:
+            class: Flexix\ConfigurationBundle\Util\Configuration
+            arguments: ['%tm_solution.dynamic_form_bundle.system_dynamic_form.config%']
+            tags:
+                - { name: flexix_prototype_controller.controller_configuration, module: 'system', alias: 'dynamic-form' } 
+
+        tm_solution.dynamic_form_bundle.system_dynamic_form.form.type.edit:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\EditFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }
+        
+        tm_solution.dynamic_form_bundle.system_dynamic_form.form.type.insert:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\InsertFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }        
+        
+        tm_solution.dynamic_form_bundle.system_dynamic_form.form.type.filter:
+            class: TMSolution\DynamicFormBundle\Form\Type\System\DynamicForm\FilterFormType
+            arguments: ['@flexix_prototype_controller.context','@doctrine.orm.entity_manager']
+            tags:
+                - { name: form.type }            
+        tm_solution.dynamic_form_bundle.system_dynamic_form.model:
+            class: TMSolution\DynamicFormBundle\Model\System\DynamicForm\Model
+            arguments: ['@doctrine.orm.entity_manager',tm_solution.dynamic_form_bundle.system_dynamic_form.repository ]
+      
+        tm_solution.dynamic_form_bundle.system_dynamic_form.paginator_model:    
+            class: TMSolution\DynamicFormBundle\Model\System\DynamicForm\PaginatorModel
+            arguments: ['@flexix_model.model','@flexix_model.filter','@flexix_model.paginator',null,'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_dynamic_form.repository','%locale%']   
+                
+        tm_solution.dynamic_form_bundle.system_dynamic_form.repository:    
+            class: TMSolution\DynamicFormBundle\Repository\System\DynamicForm\Repository
+            arguments: ['@doctrine.orm.entity_manager','@tm_solution.dynamic_form_bundle.system_dynamic_form.metadata','%locale%']   
+            
+        tm_solution.dynamic_form_bundle.system_dynamic_form.metadata:    
+            class: Doctrine\ORM\Mapping\ClassMetaData
+            arguments: [TMSolution\DynamicFormBundle\Entity\DynamicForm]            
+        tm_solution.dynamic_form_bundle.system_dynamic_form.typeahead:
+            class: TMSolution\DynamicFormBundle\Model\System\DynamicForm\Typeahead
+            arguments: ['@tm_solution.dynamic_form_bundle.system_dynamic_form.model','@flexix_model.filter','@flexix_model.paginator', {'sort': 'entity.id', 'sortDirection':'asc'},'@knp_paginator.subscriber.sliding_pagination','@tm_solution.dynamic_form_bundle.system_dynamic_form.repository','%locale%','query',[ 'entity.name']]    
+    
+            
+            
+           
