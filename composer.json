@@ -1,0 +1,29 @@
+
+{
+    "name": "tmsolution/dynamic-form-bundle",
+    "type": "symfony-bundle",
+    "description": "Simple configuration object",
+    "keywords": ["flexix","entity analyzer", "bundle"],
+    "homepage": "https://github.com/flexix/configuration-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mariusz Piela",
+            "email": "mariusz.piela@tmsolution.pl"
+        }
+        
+    ],
+    "require": {
+        
+        "php": ">=5.5.9",
+        "symfony/framework-bundle": "3.*"
+    },
+    "require-dev": { 
+        "phpunit/phpunit": "6.*" 
+        }, 
+    "autoload": {
+        "psr-4": {
+            "TMSolution\\DynamicFomrBundle\\": ""
+        }
+    }
+}
