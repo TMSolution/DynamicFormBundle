@@ -16,7 +16,7 @@
     "require": {
         
         "php": ">=5.5.9",
-        "symfony/framework-bundle": "3.*"
+        "symfony/framework-bundle": "*"
     },
     "require-dev": { 
         "phpunit/phpunit": "6.*" 
